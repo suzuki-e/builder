@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'builder/blankslate'
 
@@ -52,7 +53,7 @@ module Builder
           attrs ||= {}
           attrs.merge!({:nil => true}) if explicit_nil_handling?
         else
-          text ||= ''
+          text ||= ''.dup
           text << arg.to_s
         end
       end

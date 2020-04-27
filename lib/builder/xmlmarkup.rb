@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 #--
 # Copyright 2004, 2005 by Jim Weirich (jim@weirichhouse.org).
 # All rights reserved.
@@ -192,7 +193,7 @@ module Builder
       @quote = (options[:quote] == :single) ? "'" : '"'
       @explicit_nil_handling = options[:explicit_nil_handling]
       super(indent, margin)
-      @target = options[:target] || ""
+      @target = options[:target] || "".dup
     end
 
     # Return the target of the builder.
@@ -269,6 +270,11 @@ module Builder
     def cdata!(text)
       _ensure_no_block ::Kernel::block_given?
       _special("<![CDATA[", "]]>", text.gsub(']]>', ']]]]><![CDATA[>'), nil)
+    end
+
+    def cdata_value!(open, text)
+      _ensure_no_block ::Kernel::block_given?
+      _special("<#{open}>", "</#{open}>", "<![CDATA[#{text.gsub(']]>', ']]]]><![CDATA[>')}]]>", nil)
     end
 
     private

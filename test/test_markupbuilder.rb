@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 #--
 # Portions copyright 2004 by Jim Weirich (jim@weirichhouse.org).
@@ -417,6 +418,11 @@ class TestSpecialMarkup < Builder::Test
     assert_equal "<![CDATA[TEST]]>\n", @xml.target!
   end
 
+  def test_cdata_value
+    @xml.cdata_value!("content:encoded", "<p>TEST</p>")
+    assert_equal "<content:encoded><![CDATA[<p>TEST</p>]]></content:encoded>\n", @xml.target!
+  end
+
   def test_cdata_with_ampersand
     @xml.cdata!("TEST&CHECK")
     assert_equal "<![CDATA[TEST&CHECK]]>\n", @xml.target!
@@ -499,7 +505,7 @@ class TestIndentedXmlMarkup < Builder::Test
         $KCODE = encoding
         string
       elsif encoding == 'UTF8'
-        string.force_encoding('UTF-8')
+        string.dup.force_encoding('UTF-8')
       else
         string
       end
@@ -580,7 +586,7 @@ class TestIndentedXmlMarkup < Builder::Test
     end
 
     def pop_text
-      result = ''
+      result = ''.dup
       while ! @handler.events.empty? && @handler.events[0][0] == :text
 	result << @handler.events[0][1]
 	@handler.events.shift
